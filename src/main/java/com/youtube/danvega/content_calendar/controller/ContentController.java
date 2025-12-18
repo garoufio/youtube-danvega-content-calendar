@@ -2,6 +2,7 @@ package com.youtube.danvega.content_calendar.controller;
 
 import com.youtube.danvega.content_calendar.model.Content;
 import com.youtube.danvega.content_calendar.repository.ContentCollectionRepository;
+import com.youtube.danvega.content_calendar.repository.ContentRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,28 +12,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/content")
+@CrossOrigin
 public class ContentController {
   
-  private final ContentCollectionRepository contentRepository;
+  //private final ContentCollectionRepository repository;
+  private final ContentRepository repository;
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public ContentController(ContentCollectionRepository contentRepository) {
-    this.contentRepository = contentRepository;
+  public ContentController(ContentRepository contentRepository) {
+    this.repository = contentRepository;
   }
   
   //-------------------------------------------------------------------------------------------------------------------
 
   @GetMapping("/all")
   public List<Content> findAll() {
-    return contentRepository.findAll();
+    //return contentRepository.findAll();
+    return (List<Content>) repository.findAll();
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
   @GetMapping("/{id}")
   public Content findById(@PathVariable Integer id) {
-    return contentRepository
+    return repository
         .findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
   }
@@ -42,7 +46,7 @@ public class ContentController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("")
   public void create(@Valid @RequestBody Content c) {
-    contentRepository.save(c);
+    repository.save(c);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -50,10 +54,10 @@ public class ContentController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PutMapping("/{id}")
   public void update(@RequestBody Content c, @PathVariable Integer id) {
-    if (!contentRepository.existsById(id)) {
+    if (!repository.existsById(id)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
     }
-    contentRepository.save(c);
+    repository.save(c);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -61,7 +65,7 @@ public class ContentController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable Integer id) {
-    contentRepository.deleteById(id);
+    repository.deleteById(id);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
