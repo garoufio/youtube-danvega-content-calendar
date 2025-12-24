@@ -15,9 +15,9 @@ Content-type: application/json
 
 {
   "id": 2,
-  "title": "My second blog post",
-  "description": "This is the description of my second blog post",
-  "status": "IDEA",
+  "title": "My new blog post",
+  "description": "This is the description of my new blog post",
+  "status": "IN_PROGRESS",
   "contentType": "VIDEO",
   "dateCreated": "2025-12-08T15:47:11.1236068",
   "dateUpdated": null,
@@ -31,9 +31,9 @@ Content-type: application/json
 {
   "id": 1,
   "title": "MY FIRST BLOG POST!!!",
-  "description": "This is the description of my second blog post",
-  "status": "IDEA",
-  "contentType": "VIDEO",
+  "description": "This is the description of my first blog post",
+  "status": "IN_PROGRESS",
+  "contentType": "ARTICLE",
   "dateCreated": "2025-12-08T15:47:11.1236068",
   "dateUpdated": "2025-12-08T17:47:11.1236068",
   "url": ""
@@ -41,4 +41,3 @@ Content-type: application/json
 
 ### DELETE content with id=2
 DELETE http://localhost:8280/api/content/2
-

@@ -3,12 +3,15 @@ package com.youtube.danvega.content_calendar.repository;
 import com.youtube.danvega.content_calendar.model.Content;
 import com.youtube.danvega.content_calendar.model.ContentStatus;
 import com.youtube.danvega.content_calendar.model.ContentType;
+import org.springframework.data.relational.core.sql.UpdateBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+@Repository
 public class ContentJdbcTemplateRepository {
 
   private final JdbcTemplate jdbcTemplate;
@@ -32,7 +35,7 @@ public class ContentJdbcTemplateRepository {
         rs.getString("title"),
         rs.getString("description"),
         ContentStatus.valueOf(rs.getString("status")),
-        ContentType.valueOf(rs.getString("contentType")),
+        ContentType.valueOf(rs.getString("content_type")),
         rs.getTimestamp("date_created").toLocalDateTime(), // rs.getObject("date_created", LocalDateTime.class),
         rs.getTimestamp("date_updated") != null ? // rs.getObject("date_updated",LocalDateTime.class),
             rs.getTimestamp("date_updated").toLocalDateTime() : null,
@@ -42,41 +45,43 @@ public class ContentJdbcTemplateRepository {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public List<Content> getAllContent() {
-    String sql = "SELECT * FROM content";
+  public List<Content> getAll() {
+    String sql = "SELECT * FROM content_calendar.content";
     List<Content> contentList = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow);
     return contentList;
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public void createContent(String title, String description, ContentStatus status, ContentType contentType, String url) {
-    String sql = "INSERT INTO content (title, description, status, contentType, date_created, url) " +
+  public int create(String title, String description, ContentStatus status, ContentType contentType, String url) {
+    String sql = "INSERT INTO content_calendar.content (title, description, status, content_type, date_created, url) " +
         "VALUES (?, ?, ?, ?, NOW(), ?)";
-    jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url);
+    return jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public void updateContent(int id, String title, String description, ContentStatus status, ContentType contentType, String url) {
-    String sql = "UPDATE content SET title = ?, description = ?, status = ?, content_type = ?, " +
+  public int update(int id, String title, String description, ContentStatus status, ContentType contentType, String url) {
+    String sql = "UPDATE content_calendar.content SET title = ?, description = ?, status = ?, content_type = ?, " +
         "date_updated = NOW(), url = ? WHERE id = ?";
-    jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url, id);
-  
+    return jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url, id);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public void deleteContent(int id) {
-    String sql = "DELETE FROM content WHERE id = ?";
-    jdbcTemplate.update(sql, id);
+  public int deleteById(int id) {
+    String sql = "DELETE FROM content_calendar.content WHERE id = ?";
+    return jdbcTemplate.update(sql, id);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public Content getContent(int id) {
-    String sql = "SELECT * FROM content WHERE id = ?";
-    Content content = jdbcTemplate.queryForObject(sql, new Object[]{id}, ContentJdbcTemplateRepository::mapRow);
+  public Content getById(int id) {
+    String sql = "SELECT * FROM content_calendar.content WHERE id = ?";
+    Content content = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow, id)
+        .stream()
+        .findFirst()
+        .orElse(null);
     return content;
   }
   

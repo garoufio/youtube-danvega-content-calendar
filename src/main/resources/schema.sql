@@ -8,10 +8,10 @@ CREATE TABLE IF NOT EXISTS content_calendar.Content (
     content_type VARCHAR(50) NOT NULL,
     date_created TIMESTAMP NOT NULL,
     date_updated TIMESTAMP,
-    url VARCHAR(255)
+    url VARCHAR(255) NOT NULL
 );
 
-INSERT INTO content_calendar.Content
-    (title, description, status, content_type, date_created)
-VALUES
-    ('My Spring Data Blog Post', 'A post about spring data', 'IDEA', 'ARTICLE', NOW());
+-- INSERT INTO content_calendar.Content
+--     (title, description, status, content_type, date_created)
+-- VALUES
+--     ('My Spring Data Blog Post', 'A post about spring data', 'IDEA', 'ARTICLE', NOW());

@@ -2,6 +2,7 @@ package com.youtube.danvega.content_calendar.controller;
 
 import com.youtube.danvega.content_calendar.model.Content;
 import com.youtube.danvega.content_calendar.repository.ContentCollectionRepository;
+import com.youtube.danvega.content_calendar.repository.ContentJdbcTemplateRepository;
 import com.youtube.danvega.content_calendar.repository.ContentRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,29 +17,35 @@ import java.util.List;
 public class ContentController {
   
   //private final ContentCollectionRepository repository;
-  private final ContentRepository repository;
+  //private final ContentRepository repository;
+  private final ContentJdbcTemplateRepository repository;
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public ContentController(ContentRepository contentRepository) {
-    this.repository = contentRepository;
+  public ContentController(ContentJdbcTemplateRepository repository) {
+    this.repository = repository;
   }
   
   //-------------------------------------------------------------------------------------------------------------------
 
   @GetMapping("/all")
   public List<Content> findAll() {
-    //return contentRepository.findAll();
-    return (List<Content>) repository.findAll();
+    //return (List<Content>) repository.findAll();
+    return (List<Content>) repository.getAll();
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
   @GetMapping("/{id}")
   public Content findById(@PathVariable Integer id) {
-    return repository
-        .findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
+    Content content = repository.getById(id);
+    if (content == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
+    }
+    return content;
+//    return repository
+//        .findById(id)
+//        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -46,7 +53,10 @@ public class ContentController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("")
   public void create(@Valid @RequestBody Content c) {
-    repository.save(c);
+    int rowsAffected = repository.create(c.title(), c.description(), c.status(), c.contentType(), c.url());
+    if (rowsAffected == 0) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create content");
+    }
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -54,10 +64,11 @@ public class ContentController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PutMapping("/{id}")
   public void update(@RequestBody Content c, @PathVariable Integer id) {
-    if (!repository.existsById(id)) {
+    //if (!repository.existsById(id)) {
+    if (repository.getById(id) == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
     }
-    repository.save(c);
+    repository.update(c.id(), c.title(), c.description(), c.status(), c.contentType(), c.url());
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -65,7 +76,10 @@ public class ContentController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable Integer id) {
-    repository.deleteById(id);
+    int rowsAffected = repository.deleteById(id);
+    if (rowsAffected == 0) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete content with id = '" + id + "'");
+    }
   }
   
   //-------------------------------------------------------------------------------------------------------------------
