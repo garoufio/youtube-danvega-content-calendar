@@ -1,9 +1,7 @@
 package com.youtube.danvega.content_calendar.controller;
 
 import com.youtube.danvega.content_calendar.model.Content;
-import com.youtube.danvega.content_calendar.repository.ContentCollectionRepository;
 import com.youtube.danvega.content_calendar.repository.ContentJdbcTemplateRepository;
-import com.youtube.danvega.content_calendar.repository.ContentRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +29,14 @@ public class ContentController {
   @GetMapping("/all")
   public List<Content> findAll() {
     //return (List<Content>) repository.findAll();
-    return (List<Content>) repository.getAll();
+    return (List<Content>) repository.findAll();
   }
   
   //-------------------------------------------------------------------------------------------------------------------
   
   @GetMapping("/{id}")
   public Content findById(@PathVariable Integer id) {
-    Content content = repository.getById(id);
+    Content content = repository.findById(id);
     if (content == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
     }
@@ -53,7 +51,7 @@ public class ContentController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("")
   public void create(@Valid @RequestBody Content c) {
-    int rowsAffected = repository.create(c.title(), c.description(), c.status(), c.contentType(), c.url());
+    int rowsAffected = repository.save(c.title(), c.description(), c.status(), c.contentType(), c.url());
     if (rowsAffected == 0) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create content");
     }
@@ -63,12 +61,12 @@ public class ContentController {
   
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PutMapping("/{id}")
-  public void update(@RequestBody Content c, @PathVariable Integer id) {
+  public void update(@Valid @RequestBody Content c, @PathVariable Integer id) {
     //if (!repository.existsById(id)) {
-    if (repository.getById(id) == null) {
+    if (repository.findById(id) == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
     }
-    repository.update(c.id(), c.title(), c.description(), c.status(), c.contentType(), c.url());
+    repository.update(id, c.title(), c.description(), c.status(), c.contentType(), c.url());
   }
   
   //-------------------------------------------------------------------------------------------------------------------

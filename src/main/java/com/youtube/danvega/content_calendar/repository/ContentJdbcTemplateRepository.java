@@ -3,7 +3,6 @@ package com.youtube.danvega.content_calendar.repository;
 import com.youtube.danvega.content_calendar.model.Content;
 import com.youtube.danvega.content_calendar.model.ContentStatus;
 import com.youtube.danvega.content_calendar.model.ContentType;
-import org.springframework.data.relational.core.sql.UpdateBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -45,7 +44,7 @@ public class ContentJdbcTemplateRepository {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public List<Content> getAll() {
+  public List<Content> findAll() {
     String sql = "SELECT * FROM content_calendar.content";
     List<Content> contentList = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow);
     return contentList;
@@ -53,7 +52,7 @@ public class ContentJdbcTemplateRepository {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public int create(String title, String description, ContentStatus status, ContentType contentType, String url) {
+  public int save(String title, String description, ContentStatus status, ContentType contentType, String url) {
     String sql = "INSERT INTO content_calendar.content (title, description, status, content_type, date_created, url) " +
         "VALUES (?, ?, ?, ?, NOW(), ?)";
     return jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url);
@@ -62,9 +61,9 @@ public class ContentJdbcTemplateRepository {
   //-------------------------------------------------------------------------------------------------------------------
   
   public int update(int id, String title, String description, ContentStatus status, ContentType contentType, String url) {
-    String sql = "UPDATE content_calendar.content SET title = ?, description = ?, status = ?, content_type = ?, " +
+    String updateSql = "UPDATE content_calendar.content SET title = ?, description = ?, status = ?, content_type = ?, " +
         "date_updated = NOW(), url = ? WHERE id = ?";
-    return jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url, id);
+    return jdbcTemplate.update(updateSql, title, description, status.name(), contentType.name(), url, id);
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -76,13 +75,21 @@ public class ContentJdbcTemplateRepository {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public Content getById(int id) {
+  public Content findById(int id) {
     String sql = "SELECT * FROM content_calendar.content WHERE id = ?";
     Content content = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow, id)
         .stream()
         .findFirst()
         .orElse(null);
     return content;
+  }
+  
+  //-------------------------------------------------------------------------------------------------------------------
+  
+  public boolean existsById(int id) {
+    String sql = "SELECT COUNT(*) FROM content_calendar.content WHERE id = ?";
+    Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+    return count != null && count > 0;
   }
   
   //-------------------------------------------------------------------------------------------------------------------

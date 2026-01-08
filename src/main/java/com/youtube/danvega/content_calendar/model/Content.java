@@ -2,6 +2,7 @@ package com.youtube.danvega.content_calendar.model;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
 import java.time.LocalDateTime;
 
@@ -12,8 +13,11 @@ public record Content(
     String title,
     String description,
     ContentStatus status,
+    @Column("content_type")
     ContentType contentType,
+    @Column("date_created")
     LocalDateTime dateCreated,
+    @Column("date_updated")
     LocalDateTime dateUpdated,
     String url
 ) { }
