@@ -5,16 +5,18 @@ GET http://localhost:8280
 GET http://localhost:8280/api/content/all
 
 ### GET content with id=1
-GET http://localhost:8280/api/content/36
+GET http://localhost:8280/api/content/1
 ### GET content with id=2
 GET http://localhost:8280/api/content/2
+### GET content with title containing 'GPT'
+GET http://localhost:8280/api/content/filter/title/GPT
 
 ### Create new content
 POST http://localhost:8280/api/content
 Content-type: application/json
 
 {
-  "id": 1,
+  "id": null,
   "title": "My new AI blog post",
   "description": "This is the description of my new blog post on AI",
   "status": "IN_PROGRESS",

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ContentJdbcTemplateRepository {
@@ -52,10 +53,41 @@ public class ContentJdbcTemplateRepository {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public int save(String title, String description, ContentStatus status, ContentType contentType, String url) {
+  private Content findByContent(Content content) {
+    String sql = "SELECT * FROM content_calendar.content WHERE title = ? AND description = ? AND status = ? " +
+        "AND content_type = ? AND url = ?";
+    Optional<Content> foundContent = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow,
+            content.title(),
+            content.description(),
+            content.status().name(),
+            content.contentType().name(),
+            content.url()
+        )
+        .stream()
+        .findFirst();
+    return foundContent.orElse(null);
+  }
+  
+  //-------------------------------------------------------------------------------------------------------------------
+  
+  //public int save(String title, String description, ContentStatus status, ContentType contentType, String url) {
+  public Content save(Content content) {
     String sql = "INSERT INTO content_calendar.content (title, description, status, content_type, date_created, url) " +
         "VALUES (?, ?, ?, ?, NOW(), ?)";
-    return jdbcTemplate.update(sql, title, description, status.name(), contentType.name(), url);
+    
+    int rowsUpdated = 0;
+    Content existingContent = findByContent(content);
+    if (existingContent == null) { // Only insert if the content does not already exist
+      rowsUpdated = jdbcTemplate.update(
+          sql,
+          content.title(),
+          content.description(),
+          content.status().name(),
+          content.contentType().name(),
+          content.url()
+      );
+    }
+    return rowsUpdated > 0 ? content : null;
   }
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -75,12 +107,11 @@ public class ContentJdbcTemplateRepository {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  public Content findById(int id) {
+  public Optional<Content> findById(int id) {
     String sql = "SELECT * FROM content_calendar.content WHERE id = ?";
-    Content content = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow, id)
+    Optional<Content> content = jdbcTemplate.query(sql, ContentJdbcTemplateRepository::mapRow, id)
         .stream()
-        .findFirst()
-        .orElse(null);
+        .findFirst();
     return content;
   }
   
