@@ -11,7 +11,7 @@ public interface ContentRepository extends ListCrudRepository<Content, Integer> 
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  boolean existsByContent(Content content);
+  //boolean existsByContent(Content content);
   
   //-------------------------------------------------------------------------------------------------------------------
   

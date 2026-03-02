@@ -51,7 +51,7 @@ public class ContentController {
   //-------------------------------------------------------------------------------------------------------------------
   
   @GetMapping("/filter/title/{keyword}")
-  public List<Content> findByTitleContains(@PathVariable String keyword) {
+  public List<Content> findByTitle(@PathVariable String keyword) {
     return repository.findByTitleContains(keyword);
   }
   
@@ -60,7 +60,6 @@ public class ContentController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("")
   public void create(@Valid @RequestBody Content c) {
-    
     Content content = repository.save(c);
     if (content == null) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create content");
