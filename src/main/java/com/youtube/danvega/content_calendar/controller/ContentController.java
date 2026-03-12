@@ -17,7 +17,7 @@ import java.util.Optional;
 public class ContentController {
   
   //private final ContentCollectionRepository repository;
-//  private final ContentJdbcTemplateRepository repository;
+//private final ContentJdbcTemplateRepository repository;
   private final ContentRepository repository;
   
   //-------------------------------------------------------------------------------------------------------------------
@@ -41,8 +41,7 @@ public class ContentController {
     Optional<Content> content = repository.findById(id);
     if (content.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
-    }
-    return content.get();
+    } else return content.get();
 //    return repository
 //        .findById(id)
 //        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
@@ -69,14 +68,14 @@ public class ContentController {
   //-------------------------------------------------------------------------------------------------------------------
   
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PutMapping("/{id}")
-  public void update(@Valid @RequestBody Content c, @PathVariable Integer id) {
-    if (!repository.existsById(id)) {
-    //if (repository.findById(id) == null) {
+  @PutMapping()
+  public void update(@Valid @RequestBody Content c) {
+    if (repository.findById(c.id()).isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found");
+    } else {
+      repository.deleteById(c.id());
+      repository.save(c);
     }
-    repository.deleteById(id);
-    repository.save(c);
   }
   
   //-------------------------------------------------------------------------------------------------------------------

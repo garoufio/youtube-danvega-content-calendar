@@ -5,9 +5,9 @@ GET http://localhost:8280
 GET http://localhost:8280/api/content/all
 
 ### GET content with id=1
-GET http://localhost:8280/api/content/1
+GET http://localhost:8280/api/content/52
 ### GET content with id=2
-GET http://localhost:8280/api/content/2
+GET http://localhost:8280/api/content/40
 ### GET content with title containing 'GPT'
 GET http://localhost:8280/api/content/filter/title/GPT
 
@@ -27,13 +27,13 @@ Content-type: application/json
 }
 
 ### Update content with id=1
-PUT http://localhost:8280/api/content/35
+PUT http://localhost:8280/api/content
 Content-type: application/json
 
 {
-  "id": 35,
-  "title": "My JAVA AI video post",
-  "description": "This is the video of my new blog post on JAVA AI",
+  "id": 52,
+  "title": "My Cursor AI video post",
+  "description": "This is the video of my new video on Cursor",
   "status": "COMPLETED",
   "contentType": "VIDEO",
   "dateCreated": "2026-01-07T15:30:11.1236068",
@@ -42,4 +42,4 @@ Content-type: application/json
 }
 
 ### DELETE content with id=2
-DELETE http://localhost:8280/api/content/2
+DELETE http://localhost:8280/api/content/41

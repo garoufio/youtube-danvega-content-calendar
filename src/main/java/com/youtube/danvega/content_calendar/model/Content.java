@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
-@Table(value = "Content")   // not necessary if class name matches table name
+@Table(value = "content", schema = "content_calendar")   // not necessary if class name matches table name
 public record Content(
     @Id
     Integer id,
