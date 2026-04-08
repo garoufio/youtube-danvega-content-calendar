@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS content_calendar;
 
-CREATE TABLE IF NOT EXISTS content_calendar.Content (
+CREATE TABLE IF NOT EXISTS content_calendar.content (
     id SERIAL PRIMARY KEY,
     title varchar(255) NOT NULL,
     description text,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS content_calendar.Content (
     url VARCHAR(255) NOT NULL
 );
 
--- INSERT INTO content_calendar.Content
+-- INSERT INTO content_calendar.content
 --     (title, description, status, content_type, date_created)
 -- VALUES
 --     ('My Spring Data Blog Post', 'A post about spring data', 'IDEA', 'ARTICLE', NOW());
