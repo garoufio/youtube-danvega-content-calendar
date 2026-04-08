@@ -5,10 +5,12 @@ import com.youtube.danvega.content_calendar.model.ContentStatus;
 import com.youtube.danvega.content_calendar.model.ContentType;
 import com.youtube.danvega.content_calendar.repository.ContentRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Profile("dev") // can use ! e.g. !prod
 @Component
 public class DataLoader implements CommandLineRunner {
   
@@ -22,20 +24,21 @@ public class DataLoader implements CommandLineRunner {
   
   //-------------------------------------------------------------------------------------------------------------------
   
-  @Override
+  //@Override
   public void run(String... args) throws Exception {
     System.out.println("DataLoader running...");
-    Content content = new Content(
-        null,
-        "Hello ChatGPT",
-        "An introductory video about ChatGPT",
-        ContentStatus.IDEA,
-        ContentType.VIDEO,
-        LocalDateTime.now(),
-        null,
-        ""
-    );
-    repository.save(content);
+    // Content content = new Content(
+    //     null,
+    //     "Hello Claude",
+    //     "An introductory video about Claude, the AI assistant from Anthropic.",
+    //     ContentStatus.IDEA,
+    //     ContentType.VIDEO,
+    //     LocalDateTime.now(),
+    //     null,
+    //     ""
+    // );
+    // repository.save(content);
+    //System.out.println("Content saved: " + content);
   }
   
 }
